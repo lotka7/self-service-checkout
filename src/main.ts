@@ -1,8 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './errors/all-exception.filter';
 import { MyLogger } from './logger/services/my-logger.service';
 
 async function bootstrap() {
@@ -15,9 +14,6 @@ async function bootstrap() {
 
   // Customizable logger
   app.useLogger(new MyLogger());
-
-  // Set general, base exception filter globaly
-  app.useGlobalFilters(new AllExceptionsFilter(new HttpAdapterHost()));
 
   // Set ValidationPipe globaly
   app.useGlobalPipes(

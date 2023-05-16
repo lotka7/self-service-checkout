@@ -12,7 +12,7 @@ export class StockService extends IStockService implements OnModuleInit {
     this.myLogger.setContext('StockService');
   }
 
-  // Example for Lifecycle event
+  // Lifecycle event
   onModuleInit() {
     this.myLogger.customLog('The StockService module has been initialized!');
   }
@@ -21,19 +21,12 @@ export class StockService extends IStockService implements OnModuleInit {
 
   create(stock: Stock) {
     this.stocks.push(stock);
-    this.myLogger.customLog('Stck has been created!');
-  }
-
-  findAll(): Stock[] {
-    console.log(this.stocks);
+    this.myLogger.customLog(`Stock has been created!`);
     return this.stocks;
   }
 
-  findOne(id: number): Stock {
-    return this.stocks.find((stock) => stock.id === id);
-  }
-
-  delete(id: number) {
-    this.stocks = this.stocks.filter((stock) => stock.id !== id);
+  findAll(): Stock[] {
+    this.myLogger.customLog('The StockService module has been initialized!');
+    return this.stocks;
   }
 }

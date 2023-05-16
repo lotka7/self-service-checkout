@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: self-service-checkout
+      POSTGRES_USER: self-service-checkout
+      POSTGRES_PASSWORD: super-secret-password
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U self-service-checkout']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    # Persist database content between runs
+    volumes:
+      - self-service-checkout-pgdata:/var/lib/postgresql/data
+
+volumes:
+  self-service-checkout-pgdata:

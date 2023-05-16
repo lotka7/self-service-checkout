@@ -1,51 +1,33 @@
 import {
   Body,
   Controller,
-  Delete,
+  DefaultValuePipe,
   Get,
-  Param,
+  HttpCode,
   ParseIntPipe,
   Post,
-  Put,
-  UseInterceptors,
+  Query,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { ErrorsInterceptor } from 'src/interceptors/errors.interceptor';
 import { CreateStockDto } from './dtos/create.stock.dto';
-import { UpdateStockDto } from './dtos/update.stock.dto';
 import { IStockService } from './services/stock.service.interface';
-@Controller('cats')
-@UseInterceptors(ErrorsInterceptor)
+@Controller('stock')
 export class StockController {
-  constructor(
-    private readonly stockService: IStockService,
-    private configService: ConfigService /*<EnvironmentVariables>*/,
-  ) {}
+  constructor(private readonly stockService: IStockService) {}
 
   @Post()
+  @HttpCode(200)
   async create(@Body() createStockDto: CreateStockDto) {
-    // const dbHost = this.configService.get<string>('database.host');
-
-    this.stockService.create(createStockDto);
-    return 'This action adds a new Stock';
+    return this.stockService.create(createStockDto);
   }
 
-  @Get(':id')
-  // It can be transformad globally in main.ts trandform: true
-  findOne(@Param('id', new ParseIntPipe()) id: number) {
-    return this.stockService.findOne(id);
-  }
-
-  @Put(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateStockDto: UpdateStockDto,
+  @Get()
+  findAll(
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe)
+    size: number,
+    @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
   ) {
-    return `This action updates a #${id} cat`;
-  }
-
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return `This action removes a #${id} cat`;
+    // TODO - complete ServerSide validation
+    console.log('TODO - complete ServerSide validation', page, size);
+    return this.stockService.findAll();
   }
 }

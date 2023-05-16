@@ -1,7 +1,10 @@
-import { ValidateNested } from 'class-validator';
+import { IsNumber, ValidateNested } from 'class-validator';
 import { ValidateObjectKeysAndValues } from 'src/validators/validateObjectKeysAndValues';
 
-export class CreateStockDto {
+export class CheckoutDto {
+  @IsNumber()
+  price: number;
+
   @ValidateNested({ each: true })
   @ValidateObjectKeysAndValues('title', {
     /* you can also use additional validation options, like "groups" in your custom validation decorators. "each" is not supported */

@@ -1,5 +1,6 @@
-export interface Stock {
+export interface Checkout {
   inserted: {
     [key: string]: number;
   };
+  price: number;
 }

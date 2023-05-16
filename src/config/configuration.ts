@@ -1,14 +1,4 @@
-export interface EnvironmentVariables {
-  DATABASE_USER: string;
-  DATABASE_PASSWORD: string;
-  DATABASE_HOST: string;
-  DATABASE_PORT: number;
-}
-
 export default () => ({
+  denominations: [20000, 10000, 5000, 2000, 1000, 500, 200, 100, 50, 20, 10, 5],
   port: parseInt(process.env.PORT, 10) || 3000,
-  database: {
-    host: process.env.DATABASE_HOST || 'test',
-    port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-  },
 });
