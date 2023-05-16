@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MyLogger } from 'src/logger/services/my-logger.service';
 import { Checkout } from '../interfaces/stock.interface';
@@ -19,7 +19,7 @@ export class CheckoutService {
     let changeAmount = this.calculateChangeAmount(inserted, price);
 
     if (changeAmount < 0) {
-      throw new ForbiddenException('Forbidden action', {
+      throw new BadRequestException('Forbidden action', {
         cause: new Error(),
         description: 'Inserted amount of mooney is less than the price',
       });

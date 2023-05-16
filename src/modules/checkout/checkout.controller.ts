@@ -1,7 +1,7 @@
 import {
+  BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
   HttpCode,
   Post,
 } from '@nestjs/common';
@@ -23,7 +23,7 @@ export class CheckoutController {
       (element) => referenceArray.includes(parseInt(element)),
     );
     if (!containsOnlyAcceptableKeys) {
-      throw new ForbiddenException('Unaccepteable', {
+      throw new BadRequestException('Unaccepteable', {
         cause: new Error(),
         description: `Acceptable keys:  ${referenceArray}`,
       });
