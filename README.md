@@ -23,8 +23,7 @@ $ npm run start:prod
 
 ## DB
 
-Run Postgress db indocker with: docker-compose up -d
-Seed for Currencies: ts-node currency.seed.ts
+Run Postgress db in docker with: docker-compose up -d
 
 ## Optional features
 

@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  DefaultValuePipe,
-  Get,
-  HttpCode,
-  ParseIntPipe,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { CreateStockDto } from './dtos/create.stock.dto';
 import { IStockService } from './services/stock.service.interface';
 @Controller('stock')
@@ -21,13 +12,7 @@ export class StockController {
   }
 
   @Get()
-  findAll(
-    @Query('size', new DefaultValuePipe(10), ParseIntPipe)
-    size: number,
-    @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
-  ) {
-    // TODO - complete ServerSide validation
-    console.log('TODO - complete ServerSide validation', page, size);
+  findAll() {
     return this.stockService.findAll();
   }
 }

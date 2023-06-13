@@ -1,5 +1,20 @@
 import { ValidationOptions, registerDecorator } from 'class-validator';
 
+export const validKeyValues = [
+  '5',
+  '10',
+  '20',
+  '50',
+  '100',
+  '200',
+  '500',
+  '1000',
+  '2000',
+  '5000',
+  '10000',
+  '20000',
+];
+
 export function ValidateObjectKeysAndValues(
   property: string,
   validationOptions?: ValidationOptions,
@@ -13,10 +28,18 @@ export function ValidateObjectKeysAndValues(
       options: validationOptions,
       validator: {
         validate(value: any) {
-          return (
-            Object.values(value).every((value) => typeof value === 'number') &&
-            Object.keys(value).every((value) => typeof value === 'string')
-          ); // you can return a Promise<boolean> here as well, if you want to make async validation
+          const validValues = Object.values(value).every((value: any) => {
+            return Number.isInteger(value) && value > 0;
+          });
+
+          const validKeys = Object.keys(value).every((key) => {
+            return validKeyValues.includes(key);
+          });
+
+          if (validKeys && validValues) {
+            return true;
+          }
+          return false;
         },
       },
     });

@@ -1,13 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import CoinValues from 'src/enums/CoinValues';
+import CurrencyValues from 'src/enums/CurrencyValues';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Currency {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ default: 'EUR' })
+  @Column({ enum: CurrencyValues, default: CurrencyValues.HUF })
   currency: string;
 
-  @Column({ default: 385 })
+  @PrimaryColumn({ enum: CoinValues })
+  key: string;
+
+  @Column()
   value: number;
 }
