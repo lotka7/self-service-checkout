@@ -20,26 +20,58 @@ export class CheckoutService {
     this.myLogger.setContext('StockService');
   }
 
-  // TODO - check and finalize the logic
   async calculateChange(input: Checkout): Promise<{
     [key in HUFMoneyValue]?: number;
   }> {
     const { inserted, price } = input;
-    const insertedAmount = this.calculateTotalAmount(inserted);
+    const insertedAmount = Object.entries(inserted).reduce(
+      (total, [coin, count]) => {
+        const coinValue = parseInt(coin);
+        return total + coinValue * count;
+      },
+      0,
+    );
+
     const changeAmount = insertedAmount - price;
 
-    console.log('changeAmount = ', insertedAmount, '-', price);
     if (changeAmount < 0) {
       throw new HttpException('Insufficient payment.', HttpStatus.BAD_REQUEST);
     }
 
+    const covertedInsertedAmount: Currency[] = Object.entries(inserted).map(
+      (item) =>
+        this.currencyRepository.create({
+          currency: 'HUF',
+          key: item[0],
+          value: item[1],
+        }),
+    );
+
     const availableCoins = await this.currencyRepository.find();
+
+    // Use the incoming money as well to give back change
+    for (const element of covertedInsertedAmount) {
+      const existingIndex = availableCoins.findIndex(
+        (item) => item.key === element.key,
+      );
+      if (existingIndex !== -1) {
+        availableCoins[existingIndex].value += element.value;
+      } else {
+        availableCoins.push(element);
+      }
+    }
+
+    const change: { [key in HUFMoneyValue]?: number } = {};
     console.log(availableCoins);
     let remainingAmount = changeAmount;
 
-    const change: any = {};
+    // If the exect amount of mony was inserted
+    if (remainingAmount === 0) {
+      return change;
+    }
+
     const sortedCoins = availableCoins
-      .sort((a, b) => b.value - a.value)
+      .sort((a, b) => parseInt(b.key) - parseInt(a.key))
       .map((coin) => parseInt(coin.key));
 
     for (let i = 0; i < sortedCoins.length; i++) {
@@ -65,13 +97,20 @@ export class CheckoutService {
       );
     }
 
-    return change;
-  }
+    // Get the current amount of coins after giving back the change
+    const updatedCoins = Object.entries(change).reduce(
+      (result, [key, count]) => {
+        const foundCoinIndex = result.findIndex((coin) => coin.key === key);
+        if (foundCoinIndex !== -1) {
+          result[foundCoinIndex].value -= count;
+        }
+        return result;
+      },
+      [...availableCoins],
+    );
 
-  calculateTotalAmount(inserted: { [key in HUFMoneyValue]?: number }): number {
-    return Object.entries(inserted).reduce((total, [coin, count]) => {
-      const coinValue = parseInt(coin);
-      return total + coinValue * count;
-    }, 0);
+    await this.currencyRepository.save(updatedCoins);
+
+    return change;
   }
 }
