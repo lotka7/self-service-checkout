@@ -2,7 +2,6 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  RequestMethod,
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule as DefaultConfigModule } from '@nestjs/config';
@@ -61,8 +60,6 @@ import { StockModule } from './modules/stock/stock.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes({ path: 'ab*cd', method: RequestMethod.ALL });
+    consumer.apply(LoggerMiddleware);
   }
 }

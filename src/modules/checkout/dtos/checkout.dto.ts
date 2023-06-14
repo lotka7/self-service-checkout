@@ -1,4 +1,5 @@
 import { IsNumber, ValidateNested } from 'class-validator';
+import HUFMoneyValue from 'src/enums/HUFMoneyValue';
 import {
   ValidateObjectKeysAndValues,
   validKeyValues,
@@ -14,6 +15,6 @@ export class CheckoutDto {
     message: `Keys must be strings and match one of these values: ${validKeyValues} and values must be positive integers.`,
   })
   inserted: {
-    [key: string]: number;
+    [key in HUFMoneyValue]?: number;
   };
 }

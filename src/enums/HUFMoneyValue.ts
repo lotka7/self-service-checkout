@@ -1,4 +1,4 @@
-enum CoinValues {
+enum HUFMoneyValue {
   Value5 = '5',
   Value10 = '10',
   Value20 = '20',
@@ -12,4 +12,4 @@ enum CoinValues {
   Value10000 = '10000',
   Value20000 = '20000',
 }
-export default CoinValues;
+export default HUFMoneyValue;

@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Currency } from 'src/entities/Currency';
 import CurrencyValues from 'src/enums/CurrencyValues';
+import HUFMoneyValue from 'src/enums/HUFMoneyValue';
 import { MyLogger } from 'src/logger/services/my-logger.service';
 import { Repository } from 'typeorm';
 import { Stock } from '../interfaces/stock.interface';
@@ -25,7 +26,7 @@ export class StockService extends IStockService implements OnModuleInit {
     this.myLogger.customLog('The StockService module has been initialized!');
   }
 
-  public stocks: { [key: string]: number } = {};
+  public stocks: { [key in HUFMoneyValue]?: number } = {};
 
   // TODO - try catch
   async create(stock: Stock) {
@@ -56,7 +57,7 @@ export class StockService extends IStockService implements OnModuleInit {
     return response;
   }
 
-  async findAll(): Promise<{ [key: string]: number }> {
+  async findAll(): Promise<{ [key in HUFMoneyValue]?: number }> {
     const currentCurrencies = await this.currencyRepository.find();
     const response = {};
     currentCurrencies.forEach((cur) => (response[cur.key] = cur.value));
