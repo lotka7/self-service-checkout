@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Currency } from 'src/entities/Currency';
+import CurrencyValues from 'src/enums/CurrencyValues';
 import HUFMoneyValue from 'src/enums/HUFMoneyValue';
 import { MyLogger } from 'src/logger/services/my-logger.service';
 import { Repository } from 'typeorm';
@@ -23,7 +24,7 @@ export class CheckoutService {
   async calculateChange(input: Checkout): Promise<{
     [key in HUFMoneyValue]?: number;
   }> {
-    const { inserted, price } = input;
+    const { inserted, price, currency } = input;
     const insertedAmount = Object.entries(inserted).reduce(
       (total, [coin, count]) => {
         const coinValue = parseInt(coin);
@@ -41,7 +42,7 @@ export class CheckoutService {
     const covertedInsertedAmount: Currency[] = Object.entries(inserted).map(
       (item) =>
         this.currencyRepository.create({
-          currency: 'HUF',
+          currency: currency ?? CurrencyValues.HUF,
           key: item[0],
           value: item[1],
         }),
@@ -52,7 +53,7 @@ export class CheckoutService {
     // Use the incoming money as well to give back change
     for (const element of covertedInsertedAmount) {
       const existingIndex = availableCoins.findIndex(
-        (item) => item.key === element.key,
+        (item) => item.key === element.key && item.currency === currency,
       );
       if (existingIndex !== -1) {
         availableCoins[existingIndex].value += element.value;
