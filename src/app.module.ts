@@ -11,8 +11,10 @@ import * as Joi from 'joi';
 import configuration from './config/configuration';
 import { Currency } from './entities/Currency';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { AuthModule } from './modules/auth/auth.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
 import { StockModule } from './modules/stock/stock.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   providers: [
@@ -56,6 +58,8 @@ import { StockModule } from './modules/stock/stock.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule implements NestModule {
