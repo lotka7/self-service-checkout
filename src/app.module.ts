@@ -5,12 +5,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule as DefaultConfigModule } from '@nestjs/config';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as Joi from 'joi';
 import configuration from './config/configuration';
 import { Currency } from './entities/Currency';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { AuthGuard } from './modules/auth/auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
 import { StockModule } from './modules/stock/stock.module';
@@ -21,6 +22,10 @@ import { UsersModule } from './modules/users/users.module';
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
     },
   ],
   imports: [
