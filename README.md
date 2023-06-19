@@ -1,6 +1,10 @@
 ## Description
 
-Selfe service checker API with NestJs.
+Selfe service checker API with NestJs. The application simulates a self-checkout machine in a supermarket, which can be restocked, and calculates which bills and coins should it give back as change when used.
+
+## Documentation
+TODO - finish
+127.0.0.1:4000/swagger
 
 ## Installation
 
@@ -32,25 +36,17 @@ Use a database to store the currency - finished
 Implement a /api/v1/BlockedBills - finished
 Prepare the machine for accepting Euros - unfinished
 
-## Self Service Checkout API - Summary
-
-Your application will simulate a self-checkout machine in a supermarket, which can be restocked,
-and calculates which bills and coins should it give back as change when used.
-
 ## Details
 
 Routes has an AuthGuard (except login), so first of all user has to authenticate to get the access_token.
 At API calls header must include Bearer Token with the valid access_token
 
+TODO - remove after finished swagger
 ## /api/auth/login
 Body: {
     "username": "john",
     "password": "passsword"
 }
-
-## POST /api/v1/Stock
-The Stock endpoint accepts a JSON in a POST request, with an object containing the bills and coins to be
-loaded into the “machine” (HUF)
 
 ## GET /api/v1/Stock
 The endpoint should return a 200 OK response, with the currently stored items in the response body, or an

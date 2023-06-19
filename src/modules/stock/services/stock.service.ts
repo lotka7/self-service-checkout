@@ -29,7 +29,7 @@ export class StockService extends IStockService implements OnModuleInit {
   public stocks: { [key in HUFMoneyValue]?: number } = {};
 
   // TODO - try catch
-  async create(stock: Stock) {
+  async create(stock: Stock): Promise<{ [key in HUFMoneyValue]?: number }> {
     for (const [key, value] of Object.entries(stock.inserted)) {
       const existingCurrency = await this.currencyRepository.find({
         where: { key },
