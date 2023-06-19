@@ -13,6 +13,7 @@ import { Currency } from './entities/Currency';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
+import { BlockedBillsModule } from './modules/blocked-bills/blocked.bills.module';
 import { CheckoutModule } from './modules/checkout/checkout.module';
 import { StockModule } from './modules/stock/stock.module';
 import { UsersModule } from './modules/users/users.module';
@@ -31,6 +32,9 @@ import { UsersModule } from './modules/users/users.module';
   imports: [
     StockModule,
     CheckoutModule,
+    AuthModule,
+    UsersModule,
+    BlockedBillsModule,
     DefaultConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
@@ -63,8 +67,6 @@ import { UsersModule } from './modules/users/users.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    AuthModule,
-    UsersModule,
   ],
 })
 export class AppModule implements NestModule {
