@@ -42,8 +42,9 @@ export class StockController {
     return this.stockService.create(createStockDto);
   }
 
-  @ApiOperation({ summary: 'Get stock details' })
   @Get()
+  @Public()
+  @ApiOperation({ summary: 'Get stock details' })
   findAll() {
     return this.stockService.findAll();
   }

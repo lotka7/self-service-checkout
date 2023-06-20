@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Currency } from 'src/entities/Currency';
 import CurrencyValues from 'src/enums/CurrencyValues';
@@ -7,12 +6,13 @@ import HUFMoneyValue from 'src/enums/HUFMoneyValue';
 import { MyLogger } from 'src/logger/services/my-logger.service';
 import { Repository } from 'typeorm';
 import { Checkout } from '../interfaces/stock.interface';
+import { ExchangeRateService } from './exchange.rate.service';
 
 @Injectable()
 export class CheckoutService {
   constructor(
     private myLogger: MyLogger,
-    private configService: ConfigService,
+    private exchangeRateService: ExchangeRateService,
     @InjectRepository(Currency)
     private readonly currencyRepository: Repository<Currency>,
   ) {
@@ -33,13 +33,23 @@ export class CheckoutService {
       0,
     );
 
-    const changeAmount = insertedAmount - price;
+    let insertedAmountHUF = insertedAmount;
+
+    if (currency === CurrencyValues.EUR) {
+      insertedAmountHUF = await this.exchangeRateService.getExchangeRatesAPI(
+        insertedAmount,
+        currency,
+      );
+    }
+    const changeAmount = insertedAmountHUF - price;
 
     if (changeAmount < 0) {
       throw new HttpException('Insufficient payment.', HttpStatus.BAD_REQUEST);
     }
 
-    const covertedInsertedAmount: Currency[] = Object.entries(inserted).map(
+    const availableCoins = await this.currencyRepository.find();
+
+    const convertedInsertedAmount: Currency[] = Object.entries(inserted).map(
       (item) =>
         this.currencyRepository.create({
           currency: currency ?? CurrencyValues.HUF,
@@ -48,10 +58,8 @@ export class CheckoutService {
         }),
     );
 
-    const availableCoins = await this.currencyRepository.find();
-
     // Use the incoming money as well to give back change
-    for (const element of covertedInsertedAmount) {
+    for (const element of convertedInsertedAmount) {
       const existingIndex = availableCoins.findIndex(
         (item) => item.key === element.key && item.currency === currency,
       );
@@ -63,7 +71,6 @@ export class CheckoutService {
     }
 
     const change: { [key in HUFMoneyValue]?: number } = {};
-    console.log(availableCoins);
     let remainingAmount = changeAmount;
 
     // If the exect amount of mony was inserted
@@ -72,6 +79,7 @@ export class CheckoutService {
     }
 
     const sortedCoins = availableCoins
+      .filter((c) => c.currency === CurrencyValues.HUF)
       .sort((a, b) => parseInt(b.key) - parseInt(a.key))
       .map((coin) => parseInt(coin.key));
 
